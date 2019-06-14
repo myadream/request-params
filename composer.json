@@ -2,11 +2,6 @@
   "name": "little-superman/request-params",
   "description": "Processing request parameters",
   "type": "library",
-  "require": {
-    "php": ">=7.1.3",
-    "illuminate/config": "5.8.*",
-    "illuminate/database": "5.8.*"
-  },
   "license": "MIT",
   "authors": [
     {
@@ -14,5 +9,20 @@
       "email": "gaojianban@gmail.com"
     }
   ],
+  "require": {
+    "php": ">=7.1.3",
+    "illuminate/config": "5.8.*",
+    "illuminate/database": "5.8.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "LittleSuperman\\RequestParams\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "LittleSuperman\\RequestParams\\Tests\\": "src/"
+    }
+  },
   "minimum-stability": "dev"
 }
