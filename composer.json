@@ -1,5 +1,5 @@
 {
-  "name": "little-superman/request-params",
+  "name": "little-superman/laravel-request-params",
   "description": "Processing request parameters",
   "type": "library",
   "license": "MIT",
@@ -12,7 +12,10 @@
   "require": {
     "php": ">=7.1.3",
     "illuminate/config": "5.8.*",
-    "illuminate/database": "5.8.*"
+    "illuminate/database": "5.8.*",
+    "illuminate/support": "5.8.*",
+    "illuminate/routing": "5.8.*",
+    "symfony/routing": "^4.2"
   },
   "autoload": {
     "psr-4": {
@@ -21,8 +24,16 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "LittleSuperman\\RequestParams\\Tests\\": "src/"
+      "LittleSuperman\\RequestParams\\Tests\\": "tests/"
     }
   },
-  "minimum-stability": "dev"
+  "minimum-stability": "dev",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "LittleSuperman\\RequestParams\\Providers\\ConsoleServiceProvider",
+        "LittleSuperman\\RequestParams\\Providers\\ConfigServiceProvider"
+      ]
+    }
+  }
 }
