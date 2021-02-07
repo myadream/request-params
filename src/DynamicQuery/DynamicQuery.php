@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use LittleSuperman\RequestParams\Contracts\DynamicQuery\ModelParser as ModelParserContracts;
 use LittleSuperman\RequestParams\Contracts\DynamicQuery\ParamsParser as ParamsParserContracts;
 use LittleSuperman\RequestParams\Contracts\DynamicQuery\GrammarParser as GrammarParserContracts;
-use MongoDB\Driver\BulkWrite;
 
 /**
  * 动态查询
@@ -165,6 +164,8 @@ class DynamicQuery
 
     /**
      * 设置模型解析器
+     *
+     * @param ModelParserContracts $modelParser
      *
      * @return DynamicQuery
      */

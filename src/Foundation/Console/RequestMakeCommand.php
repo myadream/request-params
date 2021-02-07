@@ -2,9 +2,9 @@
 
 namespace LittleSuperman\RequestParams\Foundation\Console;
 
-use Illuminate\Foundation\Console\RequestMakeCommand as SupportRequestMakeCommand;
+use Illuminate\Foundation\Console\RequestMakeCommand as SuperRequestMakeCommand;
 
-class RequestMakeCommand extends SupportRequestMakeCommand
+class RequestMakeCommand extends SuperRequestMakeCommand
 {
     /**
      * The console command name.
@@ -12,13 +12,6 @@ class RequestMakeCommand extends SupportRequestMakeCommand
      * @var string
      */
     protected $name = 'customize:request';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = '自定义创建请求资源';
 
     /**
      * The type of class being generated.

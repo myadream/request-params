@@ -30,7 +30,7 @@ trait GrammarParserConversion
             'originField' => $matches['field'],
             'field' => $this->pregeMatchWhereFieldMapping($matches['field']),
             'expression' => $matches['expression'],
-        ];;
+        ];
     }
 
     /**
@@ -59,7 +59,7 @@ trait GrammarParserConversion
      * @param string $name
      * @return string
      */
-    protected function exploadName(string $name): string
+    protected function explodeName(string $name): string
     {
         $name = explode('.', $name);
 
@@ -82,9 +82,7 @@ trait GrammarParserConversion
         } elseif ($method == $this->getWhereFunName('notEqual')) {
             $method = $this->getWhereFunName('notIn');
             $val    = [$val];
-        } elseif (in_array($method, [$this->getWhereFunName('like'), $this->getWhereFunName('notLike')])) {
-            
-        } else {
+        } elseif (!in_array($method, [$this->getWhereFunName('like'), $this->getWhereFunName('notLike')])) {
             $val = [$val];
         }
 

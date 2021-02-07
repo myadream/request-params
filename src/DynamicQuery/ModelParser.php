@@ -12,7 +12,7 @@ use LittleSuperman\RequestParams\Contracts\DynamicQuery\ModelParser as ModelPars
  *
  * @package LittleSuperman\RequestParams\DynamicQuery
  */
-    class ModelParser implements ModelParserContracts
+class ModelParser implements ModelParserContracts
 {
     use Macroable;
 

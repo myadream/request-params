@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Config;
  *
  * @package LittleSuperman\RequestParams\DynamicQuery
  */
-trait GrammarParserSymobls
+trait GrammarParserSymbols
 {
     /**
      * 获取存在名称
@@ -21,7 +21,7 @@ trait GrammarParserSymobls
      */
     protected function getOptionName(string $name = ''): string
     {
-        $config = $this->getConfigSymobls('options');
+        $config = $this->getConfigSymbols('options');
 
         if (empty($config[$name])) {
             return '';
@@ -65,25 +65,26 @@ trait GrammarParserSymobls
     /**
      * 获取方法名称
      *
-     * @param string $naem
+     * @param string $name
+     *
      * @return string
      * @throws \Exception
      */
-    protected function getWhereFunName(string $naem): string
+    protected function getWhereFunName(string $name): string
     {
-        if (empty($naem) || empty($this->getWhereSymbols($naem))) {
+        if (empty($name) || empty($this->getWhereSymbols($name))) {
             throw new \Exception('为空');
         }
 
-        return $this->getWhereOptionFun($this->getWhereSymbols($naem));
+        return $this->getWhereOptionFun($this->getWhereSymbols($name));
     }
 
     /**
      * 处理默认where模板
      *
-     * @return GrammarParserSymobls
+     * @return GrammarParserSymbols
      */
-    protected function handleWhereSymobls(): self
+    protected function handleWhereSymbols(): self
     {
         $this->whereSymbols = Collection::make($this->whereSymbols)->mapWithKeys(function ($item, $key) {
             return [$this->getWhereSymbols($key) => $item];
@@ -95,13 +96,13 @@ trait GrammarParserSymobls
     /**
      * 处理正则匹配
      *
-     * @return GrammarParserSymobls
+     * @return GrammarParserSymbols
      */
     protected function handleSubgroups(): self
     {
         $this->subgroups = str_replace(
             "{symbols}",
-            Collection::make($this->getWhereSymbold())->keys()->implode('|'),
+            Collection::make($this->getWhereSymbols())->keys()->implode('|'),
             $this->subgroups
         );
 
@@ -111,9 +112,9 @@ trait GrammarParserSymobls
     /**
      * 处理默认order模板
      *
-     * @return GrammarParserSymobls
+     * @return GrammarParserSymbols
      */
-    protected function handleOrderSymobls(): self
+    protected function handleOrderSymbols(): self
     {
         $this->orderSymbols = Collection::make($this->orderSymbols)->mapWithKeys(function ($item, $key) {
             return [$this->getOrderSymbols($key) => $item];
@@ -131,13 +132,13 @@ trait GrammarParserSymobls
     protected function getWhereSymbols(string $name = null)
     {
         //合并
-        $whereSymobls = array_merge($this->getDefaultWhereSymobls(), $this->getConfigSymobls('whereSymbols'));
+        $whereSymbols = array_merge($this->getDefaultWhereSymbols(), $this->getConfigSymbols('whereSymbols'));
 
         if (is_null($name)) {
-            return $whereSymobls;
+            return $whereSymbols;
         }
 
-        return $whereSymobls[$name] ?? '';
+        return $whereSymbols[$name] ?? '';
     }
 
     /**
@@ -148,13 +149,13 @@ trait GrammarParserSymobls
      */
     protected function getOrderSymbols(string $name = null)
     {
-        $orderSymobls = array_merge($this->getDefaultOrderSymoble(), $this->getConfigSymobls('orderSymbols'));
+        $orderSymbols = array_merge($this->getDefaultOrderSymbols(), $this->getConfigSymbols('orderSymbols'));
 
         if (is_null($name)) {
-            return $orderSymobls;
+            return $orderSymbols;
         }
 
-        return $orderSymobls[$name] ?? '';
+        return $orderSymbols[$name] ?? '';
     }
 
     /**
@@ -163,7 +164,7 @@ trait GrammarParserSymobls
      * @param string $name
      * @return mixed
      */
-    protected function getConfigSymobls(string $name = '')
+    protected function getConfigSymbols(string $name = '')
     {
         return Config::get("dynamicQuery.{$name}") ?? [];
     }
@@ -171,9 +172,9 @@ trait GrammarParserSymobls
     /**
      * 获取默认模板
      *
-     * @return GrammarParserSymobls
+     * @return array
      */
-    protected function getDefaultWhereSymobls(): array
+    protected function getDefaultWhereSymbols(): array
     {
         return [
             'and' => '&',
@@ -184,8 +185,8 @@ trait GrammarParserSymobls
             'less' => '<',
             'in' => 'in',
             'notIn' => 'notIn',
-            'betwwen' => '<>',
-            'notBetwwen' => '><',
+            'between' => '<>',
+            'notBetween' => '><',
             'like' => '~',
             'notLike' => '!=',
         ];
@@ -196,7 +197,7 @@ trait GrammarParserSymobls
      *
      * @return array
      */
-    protected function getDefaultOrderSymoble(): array
+    protected function getDefaultOrderSymbols(): array
     {
         return [
             'asc' => 'asc',

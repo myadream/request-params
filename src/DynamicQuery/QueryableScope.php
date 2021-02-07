@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * 动态查询作用域
  *
- * @author gaoj <gaojianban@gmail.com>
+ * @package LittleSuperman\RequestParams\DynamicQuery
  */
 class QueryableScope implements Scope
 {
@@ -46,9 +46,7 @@ class QueryableScope implements Scope
      */
     protected function handleModel($model): array
     {
-        if (empty($model)) {
-            return [];
-        } elseif (is_string($model)) {
+        if (is_string($model)) {
             return [$model];
         } elseif (is_array($model)) {
             return $model;

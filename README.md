@@ -12,32 +12,30 @@ composer require little-superman/laravel-request-params
 **ServiceProvider** 会自动加载 
 
 ### 其他版本
-在 `config/app.php` 中添加 `LittleSuperman\RequestParams\Providers\ConsoleServiceProvider::class`, 
+在 `config/app.php` 中添加 
+`LittleSuperman\RequestParams\Providers\ConsoleServiceProvider::class`, 
 `LittleSuperman\RequestParams\Providers\ConfigServiceProvider::class`  
 
 ```php
-'providers' => [
-    ...
-    LittleSuperman\RequestParams\Providers\ConfigServiceProvider::class
-    LittleSuperman\RequestParams\Providers\ConsoleServiceProvider::class,
-],
+[
+    'providers' => [
+        ...,
+        LittleSuperman\RequestParams\Providers\ConfigServiceProvider::class,
+        LittleSuperman\RequestParams\Providers\ConsoleServiceProvider::class,
+    ],
+];
 ```
 
 ## 命令行
 
 ### 创建模型
 ```terminal
-php artisan customize:mold 模型名称
-```
-
-### 创建控制器
-```termianl
-php artisan customize:controller 控制器名称
+php artisan make:modle 模型名称
 ```
 
 ### 创建请求资源
 ```termianl
-php artisan customize:request 资源名称
+php artisan mkae:request 资源名称
 ```
 
 ## 字段说明
@@ -68,30 +66,34 @@ limit 条数
 
 ### where 条件字段限制
 ```php
-'whereSymbols' => [
-    //key => '对应前端传递值'
-    'and' => '&',
-    'or' => '|',
-    'equal' => '=',
-    'notEqual' => '!',
-    'greater' => '>',
-    'less' => '<',
-    'in' => '-',
-    'notIn' => '!-',
-    'betwwen' => '<>',
-    'notBetwwen' => '><',
-    'like' => '~',
-    'notlike' => '!=',
-],
+[
+    'whereSymbols' => [
+        //key => '对应前端传递值'
+        'and' => '&',
+        'or' => '|',
+        'equal' => '=',
+        'notEqual' => '!',
+        'greater' => '>',
+        'less' => '<',
+        'in' => '-',
+        'notIn' => '!-',
+        'between' => '<>',
+        'notBetewen' => '><',
+        'like' => '~',
+        'notLike' => '!=',
+    ],
+];
 ```
 
 ### order 字段限制
 ```php
-'orderSymbols' => [
-    //key => '对应前端传递值'
-    'asc' => 'asc',
-    'desc' => 'desc'
-],
+[
+    'orderSymbols' => [
+        //key => '对应前端传递值'
+        'asc' => 'asc',
+        'desc' => 'desc'
+    ],
+];
 ```
 
 配置文件位置: `resources/config/dynamicQuery.php`

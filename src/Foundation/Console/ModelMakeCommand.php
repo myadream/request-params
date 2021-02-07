@@ -3,28 +3,21 @@
 namespace LittleSuperman\RequestParams\Foundation\Console;
 
 use Illuminate\Support\Str;
-use Illuminate\Foundation\Console\ModelMakeCommand as SupporModelMakeCommand;
+use Illuminate\Foundation\Console\ModelMakeCommand as SuperModelMakeCommand;
 
 /**
  * 重写mold
  * 
  * @package LittleSuperman\RequestParams\Foundation\Console
  */
-class ModelMakeCommand extends SupporModelMakeCommand
+class ModelMakeCommand extends SuperModelMakeCommand
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'customize:mold';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = '自定义创建模型';
+    protected $name = 'make:model';
 
     /**
      * Replace the namespace for the given stub.

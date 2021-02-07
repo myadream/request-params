@@ -2,6 +2,7 @@
 
 namespace LittleSuperman\RequestParams\DynamicQuery;
 
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use LittleSuperman\RequestParams\Contracts\DynamicQuery\GrammarParser as GrammarParserContracts;
@@ -13,7 +14,7 @@ use LittleSuperman\RequestParams\Contracts\DynamicQuery\GrammarParser as Grammar
  */
 class GrammarParser implements GrammarParserContracts
 {
-    use GrammarParserSymobls, GrammarParserConversion;
+    use GrammarParserSymbols, GrammarParserConversion;
 
     /**
      * 语法
@@ -62,8 +63,8 @@ class GrammarParser implements GrammarParserContracts
         'less' => 'whereLess',
         'in' => 'whereIn',
         'notIn' => 'whereNotIn',
-        'betwwen' => 'whereBetwwen',
-        'notBetwwen' => 'whereNotBetwwen',
+        'between' => 'whereBetween',
+        'notBetween' => 'whereNotBetween',
         'like' => 'whereLike',
         'notLike' => 'whereNotLike',
     ];
@@ -98,21 +99,23 @@ class GrammarParser implements GrammarParserContracts
      */
     protected function handleSymbols(): void
     {
-        $this->handleOrderSymobls()->handleWhereSymobls()->handleSubgroups();
+        $this->handleOrderSymbols()->handleWhereSymbols()->handleSubgroups();
     }
 
     /**
      * 启动
      *
      * @param Builder $builder
-     * @param array   $field
+     * @param array   $modelSearchField
+     * @param array   $searchField
+     *
      * @return GrammarParserContracts
      */
-    public function boot(Builder $builder, array $modleSearchField, array $searchField): GrammarParserContracts
+    public function boot(Builder $builder, array $modelSearchField, array $searchField): GrammarParserContracts
     {
         $this->setBuilder($builder)
             ->setSearchField($searchField)
-            ->setModelSearchField($modleSearchField)
+            ->setModelSearchField($modelSearchField)
             ->parser();
 
         return $this;
@@ -123,7 +126,7 @@ class GrammarParser implements GrammarParserContracts
      *
      * @return GrammarParser
      */
-    protected function parser(): self
+    public function parser(): self
     {
         $this->whereParser()
             ->orderParser()
@@ -139,8 +142,6 @@ class GrammarParser implements GrammarParserContracts
      */
     protected function whereParser(): self
     {
-        $where = [];
-
         if (!empty($where = $this->searchField[$this->getOptionName('where')])) {
 
             Collection::make($where)->each(function ($item, $key) {
@@ -156,25 +157,25 @@ class GrammarParser implements GrammarParserContracts
     /**
      * 构建
      *
-     * @param array $preproccess
+     * @param array $preprocess
      * @param mixed $value
+     *
      * @return void
+     * @throws Exception
      */
-    protected function tectonic(array $preproccess, $value): void
+    protected function tectonic(array $preprocess, $value): void
     {
-        $type = $preproccess['type'][0];
-
         //判断是否为or 和 and 关系
-        if ($type === $this->getWhereSymbols('or')) {
+        if ($preprocess['type'][0] === $this->getWhereSymbols('or')) {
             $this->setBuilder(
-                $this->grammar->closureOrWhere($this->getBuilder(), function (Builder $query) use ($preproccess, $value) {
-                    return $this->callQueryMethod($query, $preproccess, $value);
+                $this->grammar->closureOrWhere($this->getBuilder(), function (Builder $query) use ($preprocess, $value) {
+                    return $this->callQueryMethod($query, $preprocess, $value);
                 })
             );
         } else {
             $this->setBuilder(
-                $this->grammar->closureWhere($this->getBuilder(), function (Builder $query) use ($preproccess, $value) {
-                    return $this->callQueryMethod($query, $preproccess, $value);
+                $this->grammar->closureWhere($this->getBuilder(), function (Builder $query) use ($preprocess, $value) {
+                    return $this->callQueryMethod($query, $preprocess, $value);
                 })
             );
         }
@@ -184,14 +185,15 @@ class GrammarParser implements GrammarParserContracts
      * 调用方法
      *
      * @param Builder $query
-     * @param array   $preproccess
+     * @param array   $preprocess
      * @param mixed   $value
+     *
      * @return Builder
      */
-    protected function callQueryMethod(Builder $query, array $preproccess, $value): Builder
+    protected function callQueryMethod(Builder $query, array $preprocess, $value): Builder
     {
-        foreach ($preproccess['originField'] as $key => $item) {
-            $method = $this->getWhereOptionFun($preproccess['expression'][$key]);
+        foreach ($preprocess['originField'] as $key =>$item) {
+            $method = $this->getWhereOptionFun($preprocess['expression'][$key]);
             $tempValue = $value;
 
             //处理特殊条件
@@ -202,13 +204,13 @@ class GrammarParser implements GrammarParserContracts
             }
 
             //设置参数
-            foreach ($preproccess['field'][$key] as $k => $v) {
+            foreach ($preprocess['field'][$key] as $k =>$v) {
 
                 //设置
                 foreach ($tempValue as $result) {
-                    if ($preproccess['type'][$key] === $this->getWhereSymbols('or')) {
+                    if ($preprocess['type'][$key] === $this->getWhereSymbols('or')) {
                         $query = $query->orWhere(function (Builder $query) use ($v, $method, $result) {
-                            $query = $this->callGrammar($query, $method, $v, $result);
+                            $this->callGrammar($query, $method, $v, $result);
                         });
                     } else {
                         $query = $this->callGrammar($query, $method, $v, $result);
@@ -252,7 +254,8 @@ class GrammarParser implements GrammarParserContracts
      * @param Builder     $builder
      * @param string      $option
      * @param string|null $key
-     * @param null        $value
+     * @param mixed|null  $value
+     *
      * @return Builder
      */
     protected function callGrammar(Builder $builder, string $option, string $key = null, $value = null): Builder
@@ -275,7 +278,7 @@ class GrammarParser implements GrammarParserContracts
     protected function mappingField(string $field): array
     {
         return Collection::make($this->modelSearchField)->map(function ($item, $key) use ($field) {
-            $key = $this->exploadName($key);
+            $key = $this->explodeName($key);
 
             if ($key === $field) {
                 return $item;
@@ -302,8 +305,8 @@ class GrammarParser implements GrammarParserContracts
         //设置最大页数
         if (!empty($limit = $this->searchField[$this->getOptionName('limit')])) {
             //判断是否大于最大条数
-            if ($limit > (int)$this->getConfigSymobls('maxLimit')) {
-                $limit = $this->getConfigSymobls('maxLimit');
+            if ($limit > (int)$this->getConfigSymbols('maxLimit')) {
+                $limit = $this->getConfigSymbols('maxLimit');
             }
 
             //调用语法
@@ -355,7 +358,7 @@ class GrammarParser implements GrammarParserContracts
      *
      * @return array
      */
-    public function getWhereSymbold(): array
+    public function getAllWhereSymbols(): array
     {
         return $this->whereSymbols;
     }
@@ -363,12 +366,12 @@ class GrammarParser implements GrammarParserContracts
     /**
      * 设置where模板
      *
-     * @param array $symobld
+     * @param array $symbols
      * @return GrammarParser
      */
-    public function setWhereSymobld(array $symobld): self
+    public function setWhereSymbols(array $symbols): self
     {
-        $this->getWhereSymbold = $symobld;
+        $this->whereSymbols = $symbols;
 
         return $this;
     }
@@ -378,7 +381,7 @@ class GrammarParser implements GrammarParserContracts
      *
      * @return array
      */
-    public function getOrdeBySymobld(): array
+    public function getAllOrderBySymbols(): array
     {
         return $this->orderSymbols;
     }
@@ -386,12 +389,12 @@ class GrammarParser implements GrammarParserContracts
     /**
      * 设置排序模板
      *
-     * @param array $symobld
+     * @param array $symbols
      * @return GrammarParser
      */
-    public function setOrderBySymobld(array $symobld): self
+    public function setOrderBySymbols(array $symbols): self
     {
-        $this->orderSymbols = $symobld;
+        $this->orderSymbols = $symbols;
 
         return $this;
     }

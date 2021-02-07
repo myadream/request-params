@@ -140,7 +140,7 @@ interface Grammar
      * @param array   $value
      * @return Builder
      */
-    public function whereBetwwen(Builder $builder, string $key, array $value): Builder;
+    public function whereBetween(Builder $builder, string $key, array $value): Builder;
 
     /**
      * 不等于区间搜索
@@ -150,7 +150,7 @@ interface Grammar
      * @param array   $value
      * @return Builder
      */
-    public function whereNotBetwwen(Builder $builder, string $key, array $value): Builder;
+    public function whereNotBetween(Builder $builder, string $key, array $value): Builder;
 
     /**
      * 升序

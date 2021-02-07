@@ -39,7 +39,7 @@ trait RequestParamsParser
      */
     public function getDefaultRequestParams(): array
     {
-        $params = Request::get(Config::get('dynamicQuery.key'));
+        $params = Request::input(Config::get('dynamicQuery.key'));
 
         if (empty($params)) {
             return [];
@@ -54,8 +54,9 @@ trait RequestParamsParser
      * 搜索字段key的值
      *
      * @param array $params 需要搜索参数
-     * @param       $name   
-     * @return void
+     * @param       $name
+     *
+     * @return array
      */
     private function searchField(array $params, $name)
     {
